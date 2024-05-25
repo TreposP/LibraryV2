@@ -9,7 +9,7 @@ import java.sql.Statement;
 public class CreateDB {
 
     public static void createNewDatabase() {
-        String url = "jdbc:sqlite:src/main/resources/Database.db";
+        String url = "jdbc:sqlite:/Users/CYTech Student/IdeaProjects/versionP/library/src/main/resources/Database.db";
 
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
@@ -53,9 +53,5 @@ public class CreateDB {
         } catch (SQLException e) {
             System.out.println("Erreur lors de la création de la base de données : " + e.getMessage());
         }
-    }
-
-    public static void main(String[] args) {
-        createNewDatabase();
     }
 }

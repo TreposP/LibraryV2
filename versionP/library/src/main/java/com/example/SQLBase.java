@@ -13,7 +13,7 @@ public class SQLBase {
 
     private Connection connect() {
         // Chemin de la base de données SQLite
-        String url = "jdbc:sqlite:src/main/resources/Database.db";
+        String url = "jdbc:sqlite:/Users/CYTech Student/IdeaProjects/versionP/library/src/main/resources/Database.db";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -219,55 +219,5 @@ public class SQLBase {
         }
 
         return false;
-    }
-
-    public static void main(String[] args) {
-        SQLBase example = new SQLBase();
-        Scanner scanner = new Scanner(System.in);
-
-        while (true) {
-            System.out.println("\nMenu Principal");
-            System.out.println("1. Ajouter un utilisateur");
-            System.out.println("2. Ajouter un prêt");
-            System.out.println("3. Afficher les utilisateurs");
-            System.out.println("4. Afficher tous les prêts");
-            System.out.println("5. Rechercher un prêt par titre et auteur");
-            System.out.println("6. Afficher les prêts d'un utilisateur");
-            System.out.println("7. Quitter");
-            System.out.println("Faites votre choix : ");
-
-            int choix = scanner.nextInt();
-            scanner.nextLine(); // Pour consommer le retour à la ligne
-
-            switch (choix) {
-                case 1:
-                    example.insertUser();
-                    break;
-                case 2:
-                    example.insertLoan();
-                    break;
-                case 3:
-                    example.selectUsers();
-                    break;
-                case 4:
-                    example.selectLoans();
-                    break;
-                case 5:
-                    example.searchLoanByTitleAndAuthor();
-                    break;
-                case 6:
-                    System.out.println("Entrez l'ID de l'utilisateur : ");
-                    int userId = scanner.nextInt();
-                    scanner.nextLine(); // Pour consommer le retour à la ligne
-                    example.selectLoansByUserId(userId);
-                    break;
-                case 7:
-                    System.out.println("Merci, au revoir !");
-                    scanner.close();
-                    return;
-                default:
-                    System.out.println("Choix invalide !");
-            }
-        }
     }
 }

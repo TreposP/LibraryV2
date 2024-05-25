@@ -23,6 +23,7 @@
     </properties>
 
     <dependencies>
+
         <!-- Apache HttpClient -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
