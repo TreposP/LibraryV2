@@ -23,7 +23,7 @@ public class MainApp {
         SQLBase example = new SQLBase();
         Scanner scanner = new Scanner(System.in);
 
-        // Menu principal : choix entre gestion des utilisateurs et rechercher unn livre
+        // Menu principal : choix entre gestion des utilisateurs et rechercher un livre
         while (true) {
             System.out.println("\nMenu Principal");
             System.out.println("1. Gestion des utilisateurs");
@@ -38,12 +38,14 @@ public class MainApp {
                 while (GestiontoReturnMenu) {
                     System.out.println("\nMenu de gestion des utilisateurs");
                     System.out.println("1. Ajouter un utilisateur");
-                    System.out.println("2. Ajouter un prêt");
-                    System.out.println("3. Afficher les utilisateurs");
-                    System.out.println("4. Afficher tous les prêts");
-                    System.out.println("5. Rechercher un prêt par titre et auteur");
-                    System.out.println("6. Afficher les prêts d'un utilisateur");
-                    System.out.println("7. Quitter");
+                    System.out.println("2. Supprimer un utilisateur");
+                    System.out.println("3. Ajouter un prêt");
+                    System.out.println("4. Rendre un livre emprunté");
+                    System.out.println("5. Afficher les utilisateurs");
+                    System.out.println("6. Afficher tous les prêts");
+                    System.out.println("7. Rechercher un prêt par titre et auteur");
+                    System.out.println("8. Afficher les prêts d'un utilisateur");
+                    System.out.println("9. Quitter");
                     System.out.println("Faites votre choix : ");
 
                     int choixGestion = scanner.nextInt();
@@ -54,24 +56,30 @@ public class MainApp {
                             example.insertUser();
                             break;
                         case 2:
-                            example.insertLoan();
+                            example.removeUser();
                             break;
                         case 3:
-                            example.selectUsers();
+                            example.insertLoan();
                             break;
                         case 4:
-                            example.selectLoans();
+                            example.removeBook();
                             break;
                         case 5:
-                            example.searchLoanByTitleAndAuthor();
+                            example.selectUsers();
                             break;
                         case 6:
+                            example.selectLoans();
+                            break;
+                        case 7:
+                            example.searchLoanByTitleAndAuthor();
+                            break;
+                        case 8:
                             System.out.println("Entrez l'ID de l'utilisateur : ");
                             int userId = scanner.nextInt();
                             scanner.nextLine(); // Pour consommer le retour à la ligne
                             example.selectLoansByUserId(userId);
                             break;
-                        case 7:
+                        case 9:
                             GestiontoReturnMenu = false;
                             System.out.println("Merci, au revoir !");
                             //scanner.close();
@@ -191,15 +199,7 @@ public class MainApp {
             }
             else{
                 System.out.println("Option invalide.");
-                scanner.close();
-                return;
-
             }
-
-
-
-
-
         }
     }
 }

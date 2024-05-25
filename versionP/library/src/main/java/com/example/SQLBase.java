@@ -50,6 +50,34 @@ public class SQLBase {
         }
     }
 
+    public void removeUser() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Entrez l'ID de l'utilisateur à supprimer : ");
+        int userId = scanner.nextInt();
+
+        String sql = "DELETE FROM User WHERE id = ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Utilisateur supprimé avec succès.");
+            } else {
+                System.out.println("Aucun utilisateur trouvé avec l'ID spécifié.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la suppression de l'utilisateur : " + e.getMessage());
+        }
+    }
+
+    public static void main(String[] args) {
+        SQLBase app = new SQLBase();
+        app.removeUser(); // Appel de la méthode pour supprimer un utilisateur
+    }
+
+
     public void insertLoan() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Entrez le titre du livre : ");
@@ -85,6 +113,30 @@ public class SQLBase {
         }
     }
 
+    public void removeBook() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Entrez le titre du livre à supprimer : ");
+        String title = scanner.nextLine();
+        System.out.println("Entrez l'auteur du livre à supprimer : ");
+        String autor = scanner.nextLine();
+
+        String sql = "DELETE FROM Loan WHERE titre = ? AND auteur = ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, title);
+            pstmt.setString(2, autor);
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Livre supprimé avec succès.");
+            } else {
+                System.out.println("Aucun livre trouvé avec le titre et l'auteur spécifiés.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la suppression du livre : " + e.getMessage());
+        }
+    }
     public void selectUsers() {
         String sql = "SELECT id, nom, prenom, address, phone FROM User";
 
