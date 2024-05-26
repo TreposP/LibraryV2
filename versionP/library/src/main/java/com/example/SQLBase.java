@@ -52,20 +52,24 @@ public class SQLBase {
 
     public void removeUser() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Entrez l'ID de l'utilisateur à supprimer : ");
-        int userId = scanner.nextInt();
+        System.out.println("Entrez le nom de l'utilisateur à supprimer : ");
+        String name = scanner.nextLine().toUpperCase();
+        System.out.println("Entrez le prénom de l'utilisateur à supprimer : ");
+        String surname = scanner.nextLine().toUpperCase();
+        scanner.nextLine(); // Pour consommer le retour à la ligne
 
-        String sql = "DELETE FROM User WHERE id = ?";
+        String sql = "DELETE FROM User WHERE name = ? AND surname = ?";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, userId);
+            pstmt.setString(1, name);
+            pstmt.setString(2, surname);
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
                 System.out.println("Utilisateur supprimé avec succès.");
             } else {
-                System.out.println("Aucun utilisateur trouvé avec l'ID spécifié.");
+                System.out.println("Aucun utilisateur trouvé avec le nom et prénom spécifié.");
             }
         } catch (SQLException e) {
             System.out.println("Erreur lors de la suppression de l'utilisateur : " + e.getMessage());
@@ -116,7 +120,7 @@ public class SQLBase {
         String autor = scanner.nextLine().toUpperCase();
         scanner.nextLine(); // Pour consommer le retour à la ligne
 
-        String sql = "DELETE FROM Loan WHERE titre = ? AND auteur = ?";
+        String sql = "DELETE FROM Loan WHERE title = ? AND autor = ?";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
