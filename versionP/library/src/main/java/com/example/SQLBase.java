@@ -27,13 +27,13 @@ public class SQLBase {
     public void insertUser() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Entrez le nom de l'utilisateur : ");
-        String nom = scanner.nextLine();
+        String nom = scanner.nextLine().toUpperCase();;
         System.out.println("Entrez le prénom de l'utilisateur : ");
-        String prenom = scanner.nextLine();
+        String prenom = scanner.nextLine().toUpperCase();;
         System.out.println("Entrez l'adresse de l'utilisateur : ");
-        String address = scanner.nextLine();
+        String address = scanner.nextLine().toUpperCase();;
         System.out.println("Entrez le numéro de téléphone de l'utilisateur : ");
-        String phone = scanner.nextLine();
+        String phone = scanner.nextLine().toUpperCase();;
 
         String sql = "INSERT INTO User(nom, prenom, address, phone) VALUES(?,?,?,?)";
 
@@ -72,18 +72,13 @@ public class SQLBase {
         }
     }
 
-    public static void main(String[] args) {
-        SQLBase app = new SQLBase();
-        app.removeUser(); // Appel de la méthode pour supprimer un utilisateur
-    }
-
 
     public void insertLoan() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Entrez le titre du livre : ");
-        String titre = scanner.nextLine();
+        String titre = scanner.nextLine().toUpperCase();;
         System.out.println("Entrez l'auteur du livre : ");
-        String auteur = scanner.nextLine();
+        String auteur = scanner.nextLine().toUpperCase();;
         System.out.println("Entrez l'ID de l'utilisateur : ");
         int idUser = scanner.nextInt();
         scanner.nextLine(); // Pour consommer le retour à la ligne
@@ -116,9 +111,10 @@ public class SQLBase {
     public void removeBook() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Entrez le titre du livre à supprimer : ");
-        String title = scanner.nextLine();
+        String title = scanner.nextLine().toUpperCase();
         System.out.println("Entrez l'auteur du livre à supprimer : ");
-        String autor = scanner.nextLine();
+        String autor = scanner.nextLine().toUpperCase();
+        scanner.nextLine(); // Pour consommer le retour à la ligne
 
         String sql = "DELETE FROM Loan WHERE titre = ? AND auteur = ?";
 
