@@ -1,6 +1,3 @@
-/**
- * This class provides methods to interact with a SQLite database for managing users, loans, and books.
- */
 package Projet.Biblio.APIXSQL;
 
 import java.sql.Connection;
@@ -14,88 +11,261 @@ import java.util.Scanner;
 
 public class SQLBase {
 
-    /**
-     * Establishes a connection to the SQLite database.
-     * @return Connection object representing the database connection.
-     */
     private Connection connect() {
-        // Path to the SQLite database
+        // Chemin de la base de données SQLite
         String url = "jdbc:sqlite:/Users/CYTech Student/IdeaProjects/versionP/library/src/main/resources/Database.db";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
-            System.out.println("Connection to SQLite established successfully.");
+            System.out.println("Connexion à SQLite établie avec succès.");
         } catch (SQLException e) {
-            System.out.println("Error connecting to SQLite database: " + e.getMessage());
+            System.out.println("Erreur lors de la connexion à la base de données SQLite : " + e.getMessage());
         }
         return conn;
     }
 
-    /**
-     * Inserts a new user into the User table.
-     */
     public void insertUser() {
-        // Method implementation omitted for brevity
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Entrez le nom de l'utilisateur : ");
+        String nom = scanner.nextLine().toUpperCase();;
+        System.out.println("Entrez le prénom de l'utilisateur : ");
+        String prenom = scanner.nextLine().toUpperCase();;
+        System.out.println("Entrez l'adresse de l'utilisateur : ");
+        String address = scanner.nextLine().toUpperCase();;
+        System.out.println("Entrez le numéro de téléphone de l'utilisateur : ");
+        String phone = scanner.nextLine().toUpperCase();;
+
+        String sql = "INSERT INTO User(nom, prenom, address, phone) VALUES(?,?,?,?)";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nom);
+            pstmt.setString(2, prenom);
+            pstmt.setString(3, address);
+            pstmt.setString(4, phone);
+            pstmt.executeUpdate();
+            System.out.println("Utilisateur inséré avec succès.");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'insertion de l'utilisateur : " + e.getMessage());
+        }
     }
 
-    /**
-     * Removes a user from the User table based on their ID.
-     */
     public void removeUser() {
-        // Method implementation omitted for brevity
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Entrez l'ID de l'utilisateur à supprimer : ");
+        int userId = scanner.nextInt();
+
+        String sql = "DELETE FROM User WHERE id = ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Utilisateur supprimé avec succès.");
+            } else {
+                System.out.println("Aucun utilisateur trouvé avec l'ID spécifié.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la suppression de l'utilisateur : " + e.getMessage());
+        }
     }
 
-    /**
-     * Inserts a new loan into the Loan table.
-     */
+
+
     public void insertLoan() {
-        // Method implementation omitted for brevity
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Entrez le titre du livre : ");
+        String titre = scanner.nextLine().toUpperCase();;
+        System.out.println("Entrez l'auteur du livre : ");
+        String auteur = scanner.nextLine().toUpperCase();;
+        System.out.println("Entrez l'ID de l'utilisateur : ");
+        int idUser = scanner.nextInt();
+        scanner.nextLine(); // Pour consommer le retour à la ligne
+
+        if (isBookAlreadyLoaned(titre, auteur)) {
+            System.out.println("Ce livre est déjà emprunté. Impossible d'effectuer un nouveau prêt.");
+            return;
+        }
+
+        LocalDate dateLoan = LocalDate.now();
+        LocalDate dateReturnLoan = dateLoan.plusDays(15); // Date de retour automatique dans 15 jours
+
+        String sql = "INSERT OR IGNORE INTO Loan(titre, auteur, idUser, dateLoan, dateReturnLoan, RealDateReturnLoan) VALUES(?,?,?,?,?,?)";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, titre);
+            pstmt.setString(2, auteur);
+            pstmt.setInt(3, idUser);
+            pstmt.setString(4, dateLoan.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            pstmt.setString(5, dateReturnLoan.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
+            pstmt.setNull(6, java.sql.Types.DATE); // RealDateReturnLoan initialisé à NULL par défaut
+            pstmt.executeUpdate();
+            System.out.println("Prêt inséré avec succès.");
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'insertion du prêt : " + e.getMessage());
+        }
     }
 
-    /**
-     * Removes a book from the Loan table based on its title and author.
-     */
     public void removeBook() {
-        // Method implementation omitted for brevity
-    }
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Entrez le titre du livre à supprimer : ");
+        String titre = scanner.nextLine().toUpperCase();
+        System.out.println("Entrez l'auteur du livre à supprimer : ");
+        String auteur = scanner.nextLine().toUpperCase();
 
-    /**
-     * Retrieves and prints all users from the User table.
-     */
+        String sql = "DELETE FROM Loan WHERE titre = ? AND auteur = ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, titre);
+            pstmt.setString(2, auteur);
+
+            int affectedRows = pstmt.executeUpdate();
+            if (affectedRows > 0) {
+                System.out.println("Livre supprimé avec succès.");
+            } else {
+                System.out.println("Aucun livre trouvé avec le titre et l'auteur spécifiés.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la suppression du livre : " + e.getMessage());
+        }
+    }
     public void selectUsers() {
-        // Method implementation omitted for brevity
+        String sql = "SELECT id, nom, prenom, address, phone FROM User";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                System.out.println(rs.getInt("id") + "\t" +
+                        rs.getString("nom") + "\t" +
+                        rs.getString("prenom") + "\t" +
+                        rs.getString("address") + "\t" +
+                        rs.getString("phone"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la sélection des utilisateurs : " + e.getMessage());
+        }
     }
 
-    /**
-     * Retrieves and prints all loans from the Loan table.
-     */
     public void selectLoans() {
-        // Method implementation omitted for brevity
+        String sql = "SELECT idLoan, titre, auteur, idUser, dateLoan, dateReturnLoan, RealDateReturnLoan FROM Loan";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+
+            while (rs.next()) {
+                System.out.print(rs.getInt("idLoan") + "\t");
+                System.out.print(rs.getString("titre") + "\t");
+                System.out.print(rs.getString("auteur") + "\t");
+                System.out.print(rs.getInt("idUser") + "\t");
+                System.out.print(rs.getString("dateLoan") + "\t");
+                System.out.print(rs.getString("dateReturnLoan") + "\t");
+
+                // Affichage spécifique pour la date de retour effective
+                String realDateReturnLoan = rs.getString("RealDateReturnLoan");
+                if (realDateReturnLoan == null) {
+                    System.out.println("NULL");
+                } else {
+                    System.out.println(realDateReturnLoan);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la sélection des prêts : " + e.getMessage());
+        }
     }
 
-    /**
-     * Searches for a loan by the title and author of the book.
-     */
     public void searchLoanByTitleAndAuthor() {
-        // Method implementation omitted for brevity
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Entrez le titre du livre : ");
+        String titre = scanner.nextLine().toUpperCase();
+        System.out.println("Entrez l'auteur du livre : ");
+        String auteur = scanner.nextLine().toUpperCase();
+
+        String sql = "SELECT * FROM Loan WHERE titre = ? AND auteur = ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, titre);
+            pstmt.setString(2, auteur);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                System.out.println("Ce livre est déjà emprunté.");
+                System.out.println("ID du prêt : " + rs.getInt("idLoan"));
+                System.out.println("ID de l'utilisateur : " + rs.getInt("idUser"));
+                System.out.println("Date de prêt : " + rs.getString("dateLoan"));
+                System.out.println("Date de retour prévue : " + rs.getString("dateReturnLoan"));
+                String realDateReturnLoan = rs.getString("RealDateReturnLoan");
+                if (realDateReturnLoan == null) {
+                    System.out.println("Date de retour effective : NULL");
+                } else {
+                    System.out.println("Date de retour effective : " + realDateReturnLoan);
+                }
+            } else {
+                System.out.println("Ce livre n'est pas actuellement emprunté.");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la recherche du prêt : " + e.getMessage());
+        }
     }
 
-    /**
-     * Retrieves and prints all loans associated with a specific user ID.
-     * @param userId The ID of the user whose loans are to be retrieved.
-     */
     public void selectLoansByUserId(int userId) {
-        // Method implementation omitted for brevity
+        String sql = "SELECT idLoan, titre, auteur, dateLoan, dateReturnLoan, RealDateReturnLoan FROM Loan WHERE idUser = ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            if (rs.isBeforeFirst()) {
+                System.out.println("Livres empruntés par l'utilisateur avec ID " + userId + ":");
+                while (rs.next()) {
+                    System.out.print(rs.getInt("idLoan") + "\t");
+                    System.out.print(rs.getString("titre") + "\t");
+                    System.out.print(rs.getString("auteur") + "\t");
+                    System.out.print(rs.getString("dateLoan") + "\t");
+                    System.out.print(rs.getString("dateReturnLoan") + "\t");
+
+                    // Affichage spécifique pour la date de retour effective
+                    String realDateReturnLoan = rs.getString("RealDateReturnLoan");
+                    if (realDateReturnLoan == null) {
+                        System.out.println("NULL");
+                    } else {
+                        System.out.println(realDateReturnLoan);
+                    }
+                }
+            } else {
+                System.out.println("Aucun livre emprunté par l'utilisateur avec ID " + userId);
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la sélection des prêts : " + e.getMessage());
+        }
     }
 
-    /**
-     * Checks if a book is already loaned based on its title and author.
-     * @param titre The title of the book.
-     * @param auteur The author of the book.
-     * @return true if the book is already loaned, false otherwise.
-     */
     private boolean isBookAlreadyLoaned(String titre, String auteur) {
-        // Method implementation omitted for brevity
+        String sql = "SELECT * FROM Loan WHERE titre = ? AND auteur = ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, titre);
+            pstmt.setString(2, auteur);
+
+            ResultSet rs = pstmt.executeQuery();
+
+            // Si on trouve une ligne, le livre est déjà emprunté
+            return rs.next();
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la vérification du prêt : " + e.getMessage());
+        }
+
         return false;
     }
 }
