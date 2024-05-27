@@ -10,15 +10,10 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Scanner;
 
-import static Projet.Biblio.APIXSQL.CreateDB.createNewDatabase;
-
-
 
 public class MainApp {
 
     public static void main(String[] args) throws IOException {
-        // permet de créer la BDD
-        createNewDatabase();
 
         // prêt à scanner
         SQLBase example = new SQLBase();
