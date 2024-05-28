@@ -1,4 +1,5 @@
 package Projet.Biblio.APIXSQL;
+
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.Scanner;
@@ -10,21 +11,30 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+/**
+ * Cette classe représente l'application principale pour la gestion des utilisateurs et la recherche de livres.
+ */
 public class MainApp {
 
+    /**
+     * Méthode principale de l'application.
+     *
+     * @param args Les arguments de la ligne de commande (non utilisés dans cette implémentation).
+     * @throws IOException En cas d'erreur d'entrée/sortie lors de la communication avec le serveur SPARQL.
+     */
     public static void main(String[] args) throws IOException {
 
-        // prêt à scanner
+        // Prêt à scanner
         SQLBase example = new SQLBase();
         Scanner scanner = new Scanner(System.in);
 
-        // Menu principal : choix entre gestion des utilisateurs et rechercher un livre
         try {
+            // Menu principal : choix entre gestion des utilisateurs et rechercher un livre
             while (true) {
                 System.out.println("\nMenu Principal");
                 System.out.println("1. Gestion des utilisateurs");
                 System.out.println("2. Rechercher un livre");
-                System.out.println("3. fermer l'application");
+                System.out.println("3. Fermer l'application");
 
                 int choixMenu = Integer.parseInt(scanner.nextLine().trim());
 
@@ -181,6 +191,7 @@ public class MainApp {
                         httpClient.close();
                     }
                 } else if (choixMenu == 3) {
+                    // Fermer l'application
                     System.out.println("Fermeture de l'application.");
                     break;
                 } else {
