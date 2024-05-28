@@ -9,11 +9,19 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
+/**
+ * Classe SQLBase pour gérer les opérations sur la base de données SQLite.
+ */
 public class SQLBase {
 
+    /**
+     * Méthode privée pour établir la connexion à la base de données SQLite.
+     *
+     * @return Connexion établie
+     */
     private Connection connect() {
         // Chemin de la base de données SQLite
-        String url = "jdbc:sqlite:/Users/CYTech Student/IdeaProjects/versionP/library/src/main/resources/Database.db";
+        String url = "jdbc:sqlite:/Users/paulinetrepos/Desktop/Projet_dernier/src/main/resources/Projet/Biblio/APIXSQL/Database.db";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -24,16 +32,19 @@ public class SQLBase {
         return conn;
     }
 
+    /**
+     * Insère un nouvel utilisateur dans la base de données.
+     */
     public void insertUser() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Entrez le nom de l'utilisateur : ");
-        String nom = scanner.nextLine().toUpperCase();;
+        String nom = scanner.nextLine().toUpperCase();
         System.out.println("Entrez le prénom de l'utilisateur : ");
-        String prenom = scanner.nextLine().toUpperCase();;
+        String prenom = scanner.nextLine().toUpperCase();
         System.out.println("Entrez l'adresse de l'utilisateur : ");
-        String address = scanner.nextLine().toUpperCase();;
+        String address = scanner.nextLine().toUpperCase();
         System.out.println("Entrez le numéro de téléphone de l'utilisateur : ");
-        String phone = scanner.nextLine().toUpperCase();;
+        String phone = scanner.nextLine().toUpperCase();
 
         String sql = "INSERT INTO User(nom, prenom, address, phone) VALUES(?,?,?,?)";
 
@@ -50,6 +61,9 @@ public class SQLBase {
         }
     }
 
+    /**
+     * Supprime un utilisateur de la base de données.
+     */
     public void removeUser() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Entrez l'ID de l'utilisateur à supprimer : ");
@@ -72,14 +86,15 @@ public class SQLBase {
         }
     }
 
-
-
+    /**
+     * Insère un nouveau prêt dans la base de données.
+     */
     public void insertLoan() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Entrez le titre du livre : ");
-        String titre = scanner.nextLine().toUpperCase();;
+        String titre = scanner.nextLine().toUpperCase();
         System.out.println("Entrez l'auteur du livre : ");
-        String auteur = scanner.nextLine().toUpperCase();;
+        String auteur = scanner.nextLine().toUpperCase();
         System.out.println("Entrez l'ID de l'utilisateur : ");
         int idUser = scanner.nextInt();
         scanner.nextLine(); // Pour consommer le retour à la ligne
@@ -109,30 +124,69 @@ public class SQLBase {
         }
     }
 
-    public void removeBook() {
+    /**
+     * Permet de retourner un livre emprunté.
+     */
+    public void returnBook() {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Entrez le titre du livre à supprimer : ");
-        String titre = scanner.nextLine().toUpperCase();
-        System.out.println("Entrez l'auteur du livre à supprimer : ");
-        String auteur = scanner.nextLine().toUpperCase();
+        System.out.println("Entrez l'ID de l'utilisateur : ");
+        int userId = scanner.nextInt();
 
-        String sql = "DELETE FROM Loan WHERE titre = ? AND auteur = ?";
+        // Afficher les livres que l'utilisateur est en train d'emprunter
+        listCurrentLoans(userId);
+
+        System.out.println("Entrez le numéro du livre à retourner : ");
+        int loanId = scanner.nextInt();
+        LocalDate returnDate = LocalDate.now();
+
+        String sql = "UPDATE Loan SET realDateReturnLoan = ? WHERE idUser = ? AND idLoan = ?";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, titre);
-            pstmt.setString(2, auteur);
+            pstmt.setDate(1, java.sql.Date.valueOf(returnDate));
+            pstmt.setInt(2, userId);
+            pstmt.setInt(3, loanId);
 
             int affectedRows = pstmt.executeUpdate();
             if (affectedRows > 0) {
-                System.out.println("Livre supprimé avec succès.");
+                System.out.println("Livre retourné avec succès.");
             } else {
-                System.out.println("Aucun livre trouvé avec le titre et l'auteur spécifiés.");
+                System.out.println("Aucun livre trouvé avec l'ID de l'utilisateur et le numéro du livre spécifiés.");
             }
         } catch (SQLException e) {
-            System.out.println("Erreur lors de la suppression du livre : " + e.getMessage());
+            System.out.println("Erreur lors du retour du livre : " + e.getMessage());
         }
     }
+
+    /**
+     * Méthode pour lister les emprunts actuels d'un utilisateur.
+     *
+     * @param userId ID de l'utilisateur
+     */
+    private void listCurrentLoans(int userId) {
+        String sql = "SELECT * FROM Loan WHERE idUser = ? AND realDateReturnLoan IS NULL";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+            ResultSet rs = pstmt.executeQuery();
+
+            System.out.println("Livres actuellement empruntés par l'utilisateur : ");
+            while (rs.next()) {
+                int loanId = rs.getInt("idLoan");
+                String bookTitle = rs.getString("titre");
+                String bookAuthor = rs.getString("auteur");
+
+                System.out.println(loanId + " - " + bookTitle + " by " + bookAuthor);
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération des livres empruntés : " + e.getMessage());
+        }
+    }
+
+    /**
+     * Sélectionne tous les utilisateurs enregistrés dans la base de données.
+     */
     public void selectUsers() {
         String sql = "SELECT id, nom, prenom, address, phone FROM User";
 
@@ -152,6 +206,9 @@ public class SQLBase {
         }
     }
 
+    /**
+     * Sélectionne tous les prêts enregistrés dans la base de données.
+     */
     public void selectLoans() {
         String sql = "SELECT idLoan, titre, auteur, idUser, dateLoan, dateReturnLoan, RealDateReturnLoan FROM Loan";
 
@@ -180,6 +237,9 @@ public class SQLBase {
         }
     }
 
+    /**
+     * Recherche un prêt par titre et auteur dans la base de données.
+     */
     public void searchLoanByTitleAndAuthor() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Entrez le titre du livre : ");
@@ -216,6 +276,11 @@ public class SQLBase {
         }
     }
 
+    /**
+     * Sélectionne tous les prêts pour un utilisateur spécifique.
+     *
+     * @param userId ID de l'utilisateur
+     */
     public void selectLoansByUserId(int userId) {
         String sql = "SELECT idLoan, titre, auteur, dateLoan, dateReturnLoan, RealDateReturnLoan FROM Loan WHERE idUser = ?";
 
@@ -250,6 +315,13 @@ public class SQLBase {
         }
     }
 
+    /**
+     * Vérifie si un livre est déjà emprunté.
+     *
+     * @param titre  Titre du livre
+     * @param auteur Auteur du livre
+     * @return true si le livre est déjà emprunté, false sinon
+     */
     private boolean isBookAlreadyLoaned(String titre, String auteur) {
         String sql = "SELECT * FROM Loan WHERE titre = ? AND auteur = ?";
 
