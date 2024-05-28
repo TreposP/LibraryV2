@@ -9,9 +9,6 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
 
-/**
- * Classe SQLBase pour gérer les opérations sur la base de données SQLite.
- */
 public class SQLBase {
 
     /**
@@ -21,7 +18,7 @@ public class SQLBase {
      */
     private Connection connect() {
         // Chemin de la base de données SQLite
-        String url = "jdbc:sqlite:/Users/paulinetrepos/Desktop/Projet_dernier/src/main/resources/Projet/Biblio/APIXSQL/Database.db";
+        String url = "jdbc:sqlite:/Users/CYTech Student/IdeaProjects/versionP/library/src/main/resources/Database.db";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);

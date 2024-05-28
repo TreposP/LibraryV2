@@ -1,25 +1,18 @@
 package Projet.Biblio.APIXSQL;
 
-import java.io.StringReader;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-/**
- * Cette classe fournit un service pour extraire et afficher des informations de livres à partir de données XML.
- */
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.DocumentBuilder;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
+
+import java.io.StringReader;
+
 public class BookService {
 
-    /**
-     * Méthode principale pour traiter les données XML et extraire les informations de livres.
-     *
-     * @param xmlData Les données XML à analyser et extraire.
-     */
     public static void main(String xmlData) {
         try {
             // Création d'une instance de DocumentBuilderFactory pour obtenir un DocumentBuilder
@@ -35,7 +28,7 @@ public class BookService {
             for (int i = 0; i < resultList.getLength(); i++) {
                 Element resultElement = (Element) resultList.item(i);
 
-                // Extraction des valeurs des éléments "titre", "auteur", "date"
+                // Extraction des valeurs des éléments "titre", "auteur", "date", "editeur"
                 String title = getElementValue(resultElement, "titre");
                 String author = getElementValue(resultElement, "auteur");
                 String date = getElementValue(resultElement, "date");
@@ -52,13 +45,7 @@ public class BookService {
         }
     }
 
-    /**
-     * Méthode pour extraire la valeur d'un élément donné à partir de son nom.
-     *
-     * @param parentElement L'élément parent à partir duquel extraire la valeur.
-     * @param elementName   Le nom de l'élément à extraire.
-     * @return La valeur de l'élément demandé, ou null si l'élément n'est pas trouvé.
-     */
+    // Méthode pour extraire la valeur d'un élément donné à partir de son nom
     private static String getElementValue(Element parentElement, String elementName) {
         NodeList nodeList = parentElement.getElementsByTagName("binding");
         for (int i = 0; i < nodeList.getLength(); i++) {

@@ -12,31 +12,17 @@ public class Book {
     // Properties of the book
     private final StringProperty Title;
     private final StringProperty Autor;
-    private final ObjectProperty<LocalDate> Date;
-    private final IntegerProperty ISBN;
-    private final StringProperty Available;
-
-    /**
-     * Default constructor.
-     * Initializes the book with null values.
-     */
-    public Book() {
-        this(null, null);
-    }
+    private final StringProperty Date;
 
     /**
      * Constructor with initial data.
-     * Initializes the book with the provided title and author.
-     * @param Title The title of the book
-     * @param Autor The author of the book
-     */
-    public Book(String Title, String Autor) {
+     * Initializes the book with the provided title and author.*/
+
+    public Book() {
         // Initialize properties with provided data or dummy values for testing
-        this.Title = new SimpleStringProperty(Title);
-        this.Autor = new SimpleStringProperty(Autor);
-        this.Available = new SimpleStringProperty("some Available");
-        this.ISBN = new SimpleIntegerProperty(1234);
-        this.Date = new SimpleObjectProperty<>(LocalDate.of(1999, 2, 21));
+        this.Title = new SimpleStringProperty();
+        this.Autor = new SimpleStringProperty();
+        this.Date = new SimpleStringProperty();
     }
 
     // Getters and setters for each property
@@ -65,39 +51,15 @@ public class Book {
         return Autor;
     }
 
-    public String getAvailable() {
-        return Available.get();
-    }
-
-    public void setAvailable(String Available) {
-        this.Available.set(Available);
-    }
-
-    public StringProperty AvailableProperty() {
-        return Available;
-    }
-
-    public int getISBN() {
-        return ISBN.get();
-    }
-
-    public void setISBN(int ISBN) {
-        this.ISBN.set(ISBN);
-    }
-
-    public IntegerProperty ISBNProperty() {
-        return ISBN;
-    }
-
-    public LocalDate getDate() {
+    public String getDate() {
         return Date.get();
     }
 
-    public void setDate(LocalDate Date) {
+    public void setDate(String Date) {
         this.Date.set(Date);
     }
 
-    public ObjectProperty<LocalDate> DateProperty() {
+    public StringProperty DateProperty() {
         return Date;
     }
 }

@@ -14,9 +14,6 @@ module Projet.Biblio {
     exports Projet.Biblio.User;
     opens Projet.Biblio.User to javafx.fxml;
 
-    exports Projet.Biblio.Util;
-    opens Projet.Biblio.Util to javafx.fxml;
-
     exports Projet.Biblio.StartPage;
     opens Projet.Biblio.StartPage to javafx.fxml;
 

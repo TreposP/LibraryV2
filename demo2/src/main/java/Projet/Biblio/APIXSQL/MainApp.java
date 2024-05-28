@@ -92,20 +92,12 @@ public class MainApp {
                                 break;
                         }
                     }
-                } else if (choixMenu == 2) {
+                }
+                else if (choixMenu == 2) {
                     // Rechercher un livre
-                    System.out.print("Choisissez une option : (1) ISBN, (2) Auteur/Titre/Date : ");
-                    int choix = Integer.parseInt(scanner.nextLine().trim());
-
-                    String isbn = "";
                     String titre = "";
                     String auteur = "";
                     String date = "";
-
-                    if (choix == 1) {
-                        System.out.print("Entrez l'ISBN du livre : ");
-                        isbn = scanner.nextLine().trim();
-                    } else if (choix == 2) {
                         System.out.print("Entrez le titre du livre (vide pour ignorer ce filtre) : ");
                         titre = scanner.nextLine().trim();
 
@@ -114,10 +106,6 @@ public class MainApp {
 
                         System.out.print("Entrez l'année de publication du livre (vide pour ignorer ce filtre) : ");
                         date = scanner.nextLine().trim();
-                    } else {
-                        System.out.println("Option invalide.");
-                        return;
-                    }
 
                     // Création d'un client HTTP
                     CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -132,13 +120,6 @@ public class MainApp {
                     queryBuilder.append("SELECT DISTINCT ?titre ?auteur ?date\n");
                     queryBuilder.append("WHERE {\n");
 
-                    if (!isbn.isEmpty()) {
-                        queryBuilder.append("  ?edition bnf-onto:isbn \"" + isbn + "\" ;\n");
-                        queryBuilder.append("        rdarelationships:workManifested ?work .\n");
-
-                    } else {
-                        queryBuilder.append("  ?edition rdarelationships:workManifested ?work .\n");
-
                         if (!titre.isEmpty()) {
                             queryBuilder.append("  FILTER regex(?titre, \"" + titre + "\", \"i\") \n");
                         }
@@ -151,7 +132,7 @@ public class MainApp {
                             queryBuilder.append("  ?work dcterms:date ?date .\n");
                             queryBuilder.append("  FILTER regex(?date, \"" + date + "\", \"i\") \n");
                         }
-                    }
+
                     queryBuilder.append("  ?work rdfs:label ?titre ;\n");
                     queryBuilder.append("        dcterms:creator ?creator;\n");
                     queryBuilder.append("        dcterms:date ?date.\n");

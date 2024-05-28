@@ -3,7 +3,6 @@ package Projet.Biblio.Book;
 import Projet.Biblio.MainAppFX;
 import Projet.Biblio.Screen.ScreensController;
 import Projet.Biblio.Screen.ControlledScreen;
-import Projet.Biblio.Util.DateUtil;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -82,9 +81,6 @@ public class BookOverviewController implements Initializable, ControlledScreen {
             // Fill the labels with info from the Book object.
             TitleLabel.setText(book.getTitle());
             AutorLabel.setText(book.getAutor());
-            AvailableLabel.setText(book.getAvailable());
-            ISBNLabel.setText(Integer.toString(book.getISBN()));
-            DateLabel.setText(DateUtil.format(book.getDate()));
         } else {
             // Book is null, remove all the text.
             TitleLabel.setText("");

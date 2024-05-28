@@ -1,6 +1,5 @@
 package Projet.Biblio.Book;
 
-import Projet.Biblio.Util.DateUtil;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -16,11 +15,6 @@ public class BookEditEmpruntController {
     private TextField TitleField;
     @FXML
     private TextField AutorField;
-    @FXML
-    private TextField AvailableField;
-    @FXML
-    private TextField ISBNField;
-
     @FXML
     private TextField DateField;
 
@@ -51,9 +45,7 @@ public class BookEditEmpruntController {
 
         TitleField.setText(Book.getTitle());
         AutorField.setText(Book.getAutor());
-        AvailableField.setText(Book.getAvailable());
-        ISBNField.setText(Integer.toString(Book.getISBN()));
-        DateField.setText(DateUtil.format(Book.getDate()));
+        DateField.setText(Book.getDate());
         DateField.setPromptText("dd.mm.yyyy");
     }
 
@@ -72,9 +64,7 @@ public class BookEditEmpruntController {
         if (isInputValid()) {
             Book.setTitle(TitleField.getText());
             Book.setAutor(AutorField.getText());
-            Book.setAvailable(AvailableField.getText());
-            Book.setISBN(Integer.parseInt(ISBNField.getText()));
-            Book.setDate(DateUtil.parse(DateField.getText()));
+            Book.setDate(DateField.getText());
 
             okClicked = true;
             EmpruntStage.close();
@@ -101,29 +91,10 @@ public class BookEditEmpruntController {
         if (AutorField.getText() == null || AutorField.getText().length() == 0) {
             errorMessage += "No valid last name!\n";
         }
-        if (AvailableField.getText() == null || AvailableField.getText().length() == 0) {
-            errorMessage += "No valid Available!\n";
-        }
-
-        if (ISBNField.getText() == null || ISBNField.getText().length() == 0) {
-            errorMessage += "No valid postal code!\n";
-        } else {
-            // try to parse the postal code into an int.
-            try {
-                Integer.parseInt(ISBNField.getText());
-            } catch (NumberFormatException e) {
-                errorMessage += "No valid postal code (must be an integer)!\n";
-            }
-        }
 
         if (DateField.getText() == null || DateField.getText().length() == 0) {
             errorMessage += "No valid Date!\n";
-        } else {
-            if (!DateUtil.validDate(DateField.getText())) {
-                errorMessage += "No valid Date. Use the format dd.mm.yyyy!\n";
-            }
         }
-
         if (errorMessage.length() == 0) {
             return true;
         } else {
