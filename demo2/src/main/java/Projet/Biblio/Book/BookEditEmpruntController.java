@@ -46,7 +46,6 @@ public class BookEditEmpruntController {
         TitleField.setText(Book.getTitle());
         AutorField.setText(Book.getAutor());
         DateField.setText(Book.getDate());
-        DateField.setPromptText("dd.mm.yyyy");
     }
 
     /**

@@ -38,6 +38,12 @@ public class StartPageController implements Initializable, ControlledScreen {
         myController.setScreen(MainAppFX.screenPersonPageID);
     }
 
+    @FXML
+    private void goToScreenLoanOverview(ActionEvent event){
+        System.out.println("C2");
+        myController.setScreen(MainAppFX.screenLoanPageID);
+    }
+
     /**
      * Navigates to the book page screen.
      *
@@ -45,6 +51,7 @@ public class StartPageController implements Initializable, ControlledScreen {
      */
     @FXML
     private void goToscreenBookPageID(ActionEvent event){
+        System.out.println("C3");
         myController.setScreen(MainAppFX.screenBookPageID);
     }
 

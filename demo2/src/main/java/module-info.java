@@ -19,4 +19,9 @@ module Projet.Biblio {
 
     exports Projet.Biblio.Screen;
     opens Projet.Biblio.Screen to javafx.fxml;
+
+    exports Projet.Biblio.Loan;
+    opens Projet.Biblio.Loan to javafx.fxml;
+
 }
+

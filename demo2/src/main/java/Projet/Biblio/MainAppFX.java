@@ -1,10 +1,15 @@
 package Projet.Biblio;
 
+import Projet.Biblio.User.User;
+import Projet.Biblio.Loan.Loan;
 import Projet.Biblio.Book.Book;
+
 import Projet.Biblio.Book.BookEditEmpruntController;
 import Projet.Biblio.User.UserEditDialogController;
-import Projet.Biblio.User.User;
+import Projet.Biblio.Loan.LoanEditController;
+
 import Projet.Biblio.Screen.ScreensController;
+
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,8 +27,9 @@ public class MainAppFX extends Application {
 
     private ObservableList<User> userData = FXCollections.observableArrayList();
     private ObservableList<Book> bookData = FXCollections.observableArrayList();
+    private ObservableList<Loan> loanData = FXCollections.observableArrayList();
+
     private Stage primaryStage;
-    private BorderPane rootLayout;
 
     public static MainAppFX Lemain;
 
@@ -34,18 +40,10 @@ public class MainAppFX extends Application {
     public static final String screenPersonPageFile = "/Projet/Biblio/User/PersonOverview.fxml";
     public static final String screenBookPageID = "BookOverview";
     public static final String screenBookPageFile = "/Projet/Biblio/Book/BookOverview.fxml";
+    public static final String screenLoanPageID = "LoanOverview";
+    public static final String screenLoanPageFile = "/Projet/Biblio/Loan/LoanOverview.fxml";
 
     public MainAppFX() {
-        // Add some sample data
-        userData.add(new User(1, "Hans", "Muster"));
-        userData.add(new User(2, "Ruth", "Mueller"));
-        userData.add(new User(3, "Heinz", "Kurz"));
-        userData.add(new User(4, "Cornelia", "Meier"));
-        userData.add(new User(5, "Werner", "Meyer"));
-        userData.add(new User(6, "Lydia", "Kunz"));
-        userData.add(new User(7, "Anna", "Best"));
-        userData.add(new User(8, "Stefan", "Meier"));
-        userData.add(new User(9, "Martin", "Mueller"));
     }
 
     /**
@@ -61,6 +59,15 @@ public class MainAppFX extends Application {
         return bookData;
     }
 
+    public ObservableList<Loan> getLoanData() {
+        return loanData;
+    }
+
+
+    public Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
     @Override
     public void start(Stage primaryStage) {
         Lemain = this;
@@ -71,6 +78,8 @@ public class MainAppFX extends Application {
         mainContainer.loadScreen(MainAppFX.screenStartPageID, MainAppFX.screenStartPageFile);
         mainContainer.loadScreen(MainAppFX.screenPersonPageID, MainAppFX.screenPersonPageFile);
         mainContainer.loadScreen(MainAppFX.screenBookPageID, MainAppFX.screenBookPageFile);
+        mainContainer.loadScreen(MainAppFX.screenLoanPageID, MainAppFX.screenLoanPageFile);
+
 
         mainContainer.setScreen(MainAppFX.screenStartPageID);
 
@@ -81,6 +90,9 @@ public class MainAppFX extends Application {
         primaryStage.show();
     }
 
+    public static void main(String[] args) {
+        launch(args);
+    }
     /**
      * Opens a dialog to edit details for the specified user. If the user
      * clicks OK, the changes are saved into the provided user object and true
@@ -149,11 +161,35 @@ public class MainAppFX extends Application {
             return false;
         }
     }
-    public Stage getPrimaryStage() {
-        return primaryStage;
+
+    public boolean showLoanEditDialog(Loan loan) {
+        try {
+            // Load the fxml file and create a new stage for the popup dialog.
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(MainAppFX.class.getResource("/Projet/Biblio/Loan/LoanEdit.fxml"));
+            AnchorPane page = (AnchorPane) loader.load();
+
+            // Create the dialog Stage.
+            Stage loanStage = new Stage();
+            loanStage.setTitle("Edit Loan");
+            loanStage.initModality(Modality.WINDOW_MODAL);
+            loanStage.initOwner(primaryStage);
+            Scene scene = new Scene(page);
+            loanStage.setScene(scene);
+
+            // Set the user into the controller.
+            LoanEditController controller = loader.getController();
+            controller.setLoanStage(loanStage);
+            controller.setLoan(loan);
+
+            // Show the dialog and wait until the user closes it
+            loanStage.showAndWait();
+
+            return controller.isOkClicked();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

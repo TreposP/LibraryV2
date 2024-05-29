@@ -1,5 +1,6 @@
 package Projet.Biblio;
 
+import Projet.Biblio.Loan.Loan;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import Projet.Biblio.User.User;
@@ -7,6 +8,14 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 
 public class SQLNEW {
 
@@ -96,4 +105,88 @@ public class SQLNEW {
             System.out.println("Erreur lors de la mise à jour de l'utilisateur : " + e.getMessage());
         }
     }
+
+        public ObservableList<Loan> getLoans() {
+            ObservableList<Loan> loanList = FXCollections.observableArrayList();
+            String sql = "SELECT idUser, title, author, state, dateLoan, dateReturnLoan, realDateReturnLoan FROM Loan";
+
+            try (Connection conn = this.connect();
+                 PreparedStatement pstmt = conn.prepareStatement(sql);
+                 ResultSet rs = pstmt.executeQuery()) {
+
+                while (rs.next()) {
+                    Loan loan = new Loan();
+                    loan.setIdUser(rs.getInt("idUser"));
+                    loan.setTitle(rs.getString("title"));
+                    loan.setAutor(rs.getString("author"));
+                    loan.setIsLate(rs.getString("state"));
+                    loan.setDateLoan(rs.getDate("dateLoan").toLocalDate());
+                    loan.setDateReturnLoan(rs.getDate("dateReturnLoan").toLocalDate());
+                    loan.setRealDateReturnLoan(rs.getDate("realDateReturnLoan") != null ? rs.getDate("realDateReturnLoan").toLocalDate() : null);
+                    loanList.add(loan);
+                }
+            } catch (SQLException e) {
+                System.out.println("Erreur lors de la sélection des prêts : " + e.getMessage());
+            }
+            return loanList;
+        }
+
+        public void insertLoan(Loan loan) {
+            String sql = "INSERT INTO Loan(idUser, title, author, state, dateLoan, dateReturnLoan, realDateReturnLoan) VALUES(?,?,?,?,?,?,?)";
+
+            try (Connection conn = this.connect();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, loan.getIdUser());
+                pstmt.setString(2, loan.getTitle());
+                pstmt.setString(3, loan.getAutor());
+                pstmt.setObject(4, loan.getIsLate());
+                pstmt.setDate(5, java.sql.Date.valueOf(loan.getDateLoan()));
+                pstmt.setDate(6, java.sql.Date.valueOf(loan.getDateReturnLoan()));
+                pstmt.setDate(7, loan.getRealDateReturnLoan() != null ? java.sql.Date.valueOf(loan.getRealDateReturnLoan()) : null);
+                pstmt.executeUpdate();
+                System.out.println("Prêt inséré avec succès.");
+            } catch (SQLException e) {
+                System.out.println("Erreur lors de l'insertion du prêt : " + e.getMessage());
+            }
+        }
+
+        public void removeLoan(int loanId) {
+            String sql = "DELETE FROM Loan WHERE id = ?";
+
+            try (Connection conn = this.connect();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, loanId);
+
+                int affectedRows = pstmt.executeUpdate();
+                if (affectedRows > 0) {
+                    System.out.println("Prêt supprimé avec succès.");
+                } else {
+                    System.out.println("Aucun prêt trouvé avec l'ID spécifié.");
+                }
+            } catch (SQLException e) {
+                System.out.println("Erreur lors de la suppression du prêt : " + e.getMessage());
+            }
+        }
+
+        public void updateLoan(Loan loan) {
+            String sql = "UPDATE Loan SET idUser = ?, title = ?, author = ?, state = ?, dateLoan = ?, dateReturnLoan = ?, realDateReturnLoan = ? WHERE id = ?";
+
+            try (Connection conn = this.connect();
+                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setInt(1, loan.getIdUser());
+                pstmt.setString(2, loan.getTitle());
+                pstmt.setString(3, loan.getAutor());
+                pstmt.setObject(4, loan.getIsLate());
+                pstmt.setDate(5, java.sql.Date.valueOf(loan.getDateLoan()));
+                pstmt.setDate(6, java.sql.Date.valueOf(loan.getDateReturnLoan()));
+                pstmt.setDate(7, loan.getRealDateReturnLoan() != null ? java.sql.Date.valueOf(loan.getRealDateReturnLoan()) : null);
+                pstmt.setInt(8, loan.getIdLoan());
+                pstmt.executeUpdate();
+                System.out.println("Prêt mis à jour avec succès.");
+            } catch (SQLException e) {
+                System.out.println("Erreur lors de la mise à jour du prêt : " + e.getMessage());
+            }
+        }
 }
+
+
