@@ -23,6 +23,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import static Projet.Biblio.APIXSQL.CreateDB.createNewDatabase;
+
 public class MainAppFX extends Application {
 
     private ObservableList<User> userData = FXCollections.observableArrayList();
@@ -70,6 +72,8 @@ public class MainAppFX extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+        //createNewDatabase();
+
         Lemain = this;
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("Cy-Books");

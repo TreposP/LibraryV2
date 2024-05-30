@@ -108,7 +108,7 @@ public class SQLNEW {
 
         public ObservableList<Loan> getLoans() {
             ObservableList<Loan> loanList = FXCollections.observableArrayList();
-            String sql = "SELECT idUser, title, author, state, dateLoan, dateReturnLoan, realDateReturnLoan FROM Loan";
+            String sql = "SELECT idUser, title, autor, isLate, dateLoan, dateReturnLoan, realDateReturnLoan FROM Loan";
 
             try (Connection conn = this.connect();
                  PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -118,8 +118,8 @@ public class SQLNEW {
                     Loan loan = new Loan();
                     loan.setIdUser(rs.getInt("idUser"));
                     loan.setTitle(rs.getString("title"));
-                    loan.setAutor(rs.getString("author"));
-                    loan.setIsLate(rs.getString("state"));
+                    loan.setAutor(rs.getString("autor"));
+                    loan.setIsLate(rs.getString("isLate"));
                     loan.setDateLoan(rs.getDate("dateLoan").toLocalDate());
                     loan.setDateReturnLoan(rs.getDate("dateReturnLoan").toLocalDate());
                     loan.setRealDateReturnLoan(rs.getDate("realDateReturnLoan") != null ? rs.getDate("realDateReturnLoan").toLocalDate() : null);
@@ -132,7 +132,7 @@ public class SQLNEW {
         }
 
         public void insertLoan(Loan loan) {
-            String sql = "INSERT INTO Loan(idUser, title, author, state, dateLoan, dateReturnLoan, realDateReturnLoan) VALUES(?,?,?,?,?,?,?)";
+            String sql = "INSERT INTO Loan(idUser, title, autor, isLate, dateLoan, dateReturnLoan, realDateReturnLoan) VALUES(?,?,?,?,?,?,?)";
 
             try (Connection conn = this.connect();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -169,7 +169,7 @@ public class SQLNEW {
         }
 
         public void updateLoan(Loan loan) {
-            String sql = "UPDATE Loan SET idUser = ?, title = ?, author = ?, state = ?, dateLoan = ?, dateReturnLoan = ?, realDateReturnLoan = ? WHERE id = ?";
+            String sql = "UPDATE Loan SET idUser = ?, title = ?, author = ?, isLate = ?, dateLoan = ?, dateReturnLoan = ?, realDateReturnLoan = ? WHERE id = ?";
 
             try (Connection conn = this.connect();
                  PreparedStatement pstmt = conn.prepareStatement(sql)) {

@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Scanner;
 
 public class SQLBase {
@@ -154,8 +155,8 @@ public class SQLBase {
             System.out.println("Erreur lors du retour du livre : " + e.getMessage());
         }
     }
-    
-        public int Laterorno(String datestr1, String datestr2){
+
+    public int Laterorno(String datestr1, String datestr2){
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         try {
@@ -171,47 +172,47 @@ public class SQLBase {
 
     public void lateLoan (){
         String sql = "SELECT * FROM Loan WHERE RealDateReturnLoan IS NOT NULL";
-        
-        try (Connection conn = this.connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery()) {
-                System.out.print("\n liste de livre rendu en retard: \n");
-                while(rs.next()){
-                
-                    if(Laterorno(rs.getString("dateReturnLoan"), (rs.getString("RealDateReturnLoan"))) < 0){
-                        System.out.print(rs.getInt("idLoan") + "\t");
-                        System.out.print(rs.getString("titre") + "\t");
-                        System.out.print(rs.getString("auteur") + "\t");
-                        System.out.print(rs.getInt("idUser") + "\t");
-                        System.out.print(rs.getString("dateLoan") + "\t");
-                        System.out.print(rs.getString("dateReturnLoan") + "\t"+ "\n");
-                    }
-                }
-        }  catch(SQLException e){
-                System.out.println("Erreur lors de la suppression du livre : " + e.getMessage());
-        }
 
-        sql = "SELECT * FROM Loan WHERE RealDateReturnLoan IS NULL";
         try (Connection conn = this.connect();
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery()) {
-                System.out.print("\n liste de livren pas encore rendu et en retard: \n");
-                while(rs.next()){
-                    
-                    if(Laterorno(rs.getString("dateReturnLoan"), (LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))) < 0){
-                        System.out.print(rs.getInt("idLoan") + "\t");
-                        System.out.print(rs.getString("titre") + "\t");
-                        System.out.print(rs.getString("auteur") + "\t");
-                        System.out.print(rs.getInt("idUser") + "\t");
-                        System.out.print(rs.getString("dateLoan") + "\t");
-                        System.out.print(rs.getString("dateReturnLoan") + "\t"+ "\n");
-                    }
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            System.out.print("\n liste de livre rendu en retard: \n");
+            while(rs.next()){
+
+                if(Laterorno(rs.getString("dateReturnLoan"), (rs.getString("RealDateReturnLoan"))) < 0){
+                    System.out.print(rs.getInt("idLoan") + "\t");
+                    System.out.print(rs.getString("titre") + "\t");
+                    System.out.print(rs.getString("auteur") + "\t");
+                    System.out.print(rs.getInt("idUser") + "\t");
+                    System.out.print(rs.getString("dateLoan") + "\t");
+                    System.out.print(rs.getString("dateReturnLoan") + "\t"+ "\n");
                 }
+            }
         }  catch(SQLException e){
             System.out.println("Erreur lors de la suppression du livre : " + e.getMessage());
         }
 
-    }    
+        sql = "SELECT * FROM Loan WHERE RealDateReturnLoan IS NULL";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt = conn.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            System.out.print("\n liste de livre pas encore rendu et en retard: \n");
+            while(rs.next()){
+
+                if(Laterorno(rs.getString("dateReturnLoan"), (LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))) > 0){
+                    System.out.print(rs.getInt("idLoan") + "\t");
+                    System.out.print(rs.getString("titre") + "\t");
+                    System.out.print(rs.getString("auteur") + "\t");
+                    System.out.print(rs.getInt("idUser") + "\t");
+                    System.out.print(rs.getString("dateLoan") + "\t");
+                    System.out.print(rs.getString("dateReturnLoan") + "\t"+ "\n");
+                }
+            }
+        }  catch(SQLException e){
+            System.out.println("Erreur lors de la suppression du livre : " + e.getMessage());
+        }
+
+    }
 
     /**
      * Méthode pour lister les emprunts actuels d'un utilisateur.

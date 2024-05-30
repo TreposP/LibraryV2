@@ -4,6 +4,8 @@ import Projet.Biblio.SQLNEW;
 import Projet.Biblio.MainAppFX;
 import Projet.Biblio.Screen.ScreensController;
 import Projet.Biblio.Screen.ControlledScreen;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -11,6 +13,12 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class UserOverviewController implements Initializable, ControlledScreen {
@@ -18,6 +26,11 @@ public class UserOverviewController implements Initializable, ControlledScreen {
     @FXML private TableView<User> personTable;
     @FXML private TableColumn<User, String> firstNameColumn;
     @FXML private TableColumn<User, String> lastNameColumn;
+
+    @FXML private TextField firstNameField;
+    @FXML private TextField lastNameField;
+
+
     @FXML private Label IdLabel;
     @FXML private Label firstNameLabel;
     @FXML private Label lastNameLabel;
@@ -43,6 +56,9 @@ public class UserOverviewController implements Initializable, ControlledScreen {
         sqlBase = new SQLNEW();
     }
 
+    private ObservableList<User> userData = FXCollections.observableArrayList();
+
+
     /**
      * Initializes the controller class. This method is automatically called after the FXML file has been loaded.
      *
@@ -53,8 +69,13 @@ public class UserOverviewController implements Initializable, ControlledScreen {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // Initialize the person table with the two columns.
-        firstNameColumn.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        lastNameColumn.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        firstNameColumn.setCellValueFactory(cellData -> cellData.getValue().firstNameProperty());
+        lastNameColumn.setCellValueFactory(cellData -> cellData.getValue().lastNameProperty());
+
+        /**
+         * Example usage for integer or double values:
+         * ChiffreColumn.setCellValueFactory(cellData -> cellData.getValue().ChiffreProperty().asObject());
+         */
 
         // Clear person details.
         showPersonDetails(null);
@@ -62,10 +83,9 @@ public class UserOverviewController implements Initializable, ControlledScreen {
         // Listen for selection changes and show the person details when changed.
         personTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> showPersonDetails(newValue));
-
-        // Load user data from database
-        personTable.setItems(sqlBase.getUsers());
     }
+
+
 
     /**
      * Sets the main application reference.
@@ -151,6 +171,81 @@ public class UserOverviewController implements Initializable, ControlledScreen {
             // No selection made.
             showAlert("No Selection", "No Person Selected", "Please select a person in the table.");
         }
+    }
+
+    @FXML
+    private void handleUserSearch() {
+
+        String firstName = firstNameField.getText().trim();//mettre touppercase ça peut etre bien
+        String lastName = lastNameField.getText().trim();
+
+        if (firstName.isEmpty() && lastName.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Input");
+            alert.setHeaderText(null);
+            alert.setContentText("Pour faire une recherche il faut au moins un nom ou un prénom");
+            alert.showAndWait();
+            return;
+        }
+
+        // Recherche des utilisateurs dans la base de données
+        List<User> users = searchUsers(firstName, lastName);
+        userData.clear();
+        userData.addAll(users);
+    }
+
+    private List<User> searchUsers(String firstName, String lastName) {
+        List<User> users = new ArrayList<>();
+        String url = "jdbc:sqlite:/Users/CYTech Student/IdeaProjects/versionP/library/src/main/resources/Database.db";
+
+        try (Connection conn = DriverManager.getConnection(url)) {
+            StringBuilder query = new StringBuilder("SELECT * FROM User WHERE 1=1");
+            if (!firstName.isEmpty()) {
+                query.append(" AND \"firstName\" LIKE ?");
+            }
+            if (!lastName.isEmpty()) {
+                query.append(" AND \"lastName\" LIKE ?");
+            }
+
+            try (PreparedStatement stmt = conn.prepareStatement(query.toString())) {
+                int paramIndex = 1;
+                if (!firstName.isEmpty()) {
+                    stmt.setString(paramIndex++, "%" + firstName + "%");
+                }
+                if (!lastName.isEmpty()) {
+                    stmt.setString(paramIndex++, "%" + lastName + "%");
+                }
+                //pas tout compris
+                try (ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        int id = rs.getInt("id");
+                        String first = rs.getString("firstName");
+                        String last = rs.getString("lastName");
+                        String address = rs.getString("address");
+                        String phone = rs.getString("phone");
+                        // Assuming the constructor User(int id, String firstName, String lastName) exists
+                        users.add(new User(id, first, last));
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return users;
+    }
+
+    @FXML
+    private void handleAllDisplay(){
+        personTable.setItems(sqlBase.getUsers());
+
+    }
+
+    private void showErrorMessage(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     /**

@@ -19,10 +19,11 @@ public class Loan {
     private final IntegerProperty idUser;
     private final StringProperty title;
     private final StringProperty autor;
+    private final StringProperty isLate;
     private final ObjectProperty<LocalDate> dateLoan;
     private final ObjectProperty<LocalDate> dateReturnLoan;
     private final ObjectProperty<LocalDate> realDateReturnLoan;
-    private final StringProperty isLate;
+
 
     /**
      * Default constructor.

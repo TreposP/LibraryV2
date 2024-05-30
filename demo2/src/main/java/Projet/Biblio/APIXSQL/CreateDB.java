@@ -20,8 +20,8 @@ public class CreateDB {
                 // Création des tables
                 String createUserTable = "CREATE TABLE IF NOT EXISTS User ("
                         + " id INTEGER PRIMARY KEY,"
-                        + " nom TEXT NOT NULL,"
-                        + " prenom TEXT NOT NULL,"
+                        + " firstName TEXT NOT NULL,"
+                        + " lastName TEXT NOT NULL,"
                         + " address TEXT,"
                         + " phone TEXT"
                         + ");";
@@ -30,12 +30,13 @@ public class CreateDB {
                         + " idLoan INTEGER PRIMARY KEY,"
                         + " idUser INTEGER,"
                         + " title TEXT NOT NULL,"
-                        + " auteur TEXT NOT NULL,"
+                        + " autor TEXT NOT NULL,"
                         + " dateLoan TEXT,"
                         + " dateReturnLoan TEXT,"
                         + " RealDateReturnLoan TEXT,"
+                        + " isLate TEXT,"
                         + " FOREIGN KEY (idUser) REFERENCES User(id),"
-                        + " UNIQUE(titre, auteur)"
+                        + " UNIQUE(title, autor)"
                         + ");";
 
                 try (Statement stmt = conn.createStatement()) {
@@ -54,4 +55,8 @@ public class CreateDB {
             System.out.println("Erreur lors de la création de la base de données : " + e.getMessage());
         }
     }
+/**
+    public static void main (String[] args) throws Exception{
+        createNewDatabase();
+    }*/
 }

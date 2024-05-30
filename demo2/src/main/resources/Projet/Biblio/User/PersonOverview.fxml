@@ -69,12 +69,12 @@
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font></Button>
-                  <TextField layoutX="49.0" layoutY="260.0" prefHeight="40.0" prefWidth="368.0" text="Recherche un utilisateur.. (Nom Prenom)" AnchorPane.leftAnchor="49.0">
+                  <TextField fx:id="firstNameField" layoutX="14.0" layoutY="229.0" prefHeight="40.0" prefWidth="303.0" promptText="Recherche un utilisateur.. (Prenom)" AnchorPane.leftAnchor="14.0">
                      <font>
                         <Font name="System Bold" size="15.0" />
                      </font>
                   </TextField>
-                  <ButtonBar layoutX="27.0" layoutY="174.0" prefHeight="86.0" prefWidth="389.0" AnchorPane.topAnchor="140.0">
+                  <ButtonBar layoutX="39.0" layoutY="129.0" prefHeight="86.0" prefWidth="389.0" AnchorPane.topAnchor="129.0">
                     <buttons>
                       <Button mnemonicParsing="false" onAction="#handleNewPerson" prefHeight="49.0" prefWidth="121.0" text="New..." textFill="#2760ab">
                            <rotationAxis>
@@ -87,6 +87,13 @@
                   </ButtonBar>
                   <Line endX="443.4999084472656" endY="7.401057243347168" layoutX="34.0" layoutY="-7.0" opacity="0.87" startX="443.4999694824219" startY="321.2797546386719" stroke="#2760ab" strokeWidth="3.0" AnchorPane.bottomAnchor="280.0" AnchorPane.leftAnchor="476.79278564453125" AnchorPane.topAnchor="5.0" />
                   <Line endX="-44.00000762939453" endY="327.4000244140625" layoutX="44.0" layoutY="3.0" opacity="0.87" startX="854.4000854492188" startY="327.4000244140625" stroke="#2760ab" strokeWidth="3.0" />
+                  <TextField fx:id="lastNameField" layoutX="14.0" layoutY="279.0" prefHeight="40.0" prefWidth="303.0" promptText="Recherche un utilisateur.. (Nom)">
+                     <font>
+                        <Font name="System Bold" size="15.0" />
+                     </font>
+                  </TextField>
+                  <Button layoutX="343.0" layoutY="279.0" mnemonicParsing="false" onAction="#handleUserSearch" prefHeight="40.0" prefWidth="117.0" text="Rechercher" textFill="#2760ab" />
+                  <Button layoutX="343.0" layoutY="229.0" mnemonicParsing="false" onAction="#handleAllDisplay" prefHeight="40.0" prefWidth="117.0" text="Tout afficher" textFill="#2760ab" />
                </children>
             </AnchorPane>
         </items>

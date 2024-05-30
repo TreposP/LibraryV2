@@ -76,7 +76,7 @@
                                 <Font name="System Bold" size="15.0" />
                             </font>
                         </TextField>
-                        <ButtonBar layoutX="27.0" layoutY="117.0" prefHeight="75.0" prefWidth="390.0" AnchorPane.topAnchor="117.0">
+                        <ButtonBar layoutX="15.0" layoutY="117.0" prefHeight="75.0" prefWidth="414.0" AnchorPane.topAnchor="117.0">
                             <buttons>
                                 <Button mnemonicParsing="false" onAction="#handleNewLoan" prefHeight="49.0" prefWidth="121.0" text="New..." textFill="#2760ab">
                                     <rotationAxis>
@@ -84,7 +84,7 @@
                                     </rotationAxis>
                                 </Button>
                                 <Button mnemonicParsing="false" onAction="#handleEditLoan" prefHeight="48.0" text="Edit..." textFill="#2760ab" />
-                                <Button mnemonicParsing="false" onAction="#handleEditLoan" prefHeight="48.0" prefWidth="144.0" text="Rendre un livre" textFill="#2760ab" />
+                                <Button mnemonicParsing="false" prefHeight="48.0" prefWidth="144.0" text="Rechercher un livre" textFill="#2760ab" />
                             </buttons>
                         </ButtonBar>
                         <Line endX="443.4999084472656" endY="7.401057243347168" layoutX="34.0" layoutY="-7.0" opacity="0.87" startX="443.4999694824219" startY="321.2797546386719" stroke="#2760ab" strokeWidth="3.0" AnchorPane.bottomAnchor="280.0" AnchorPane.leftAnchor="476.79278564453125" AnchorPane.topAnchor="5.0" />

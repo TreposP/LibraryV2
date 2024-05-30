@@ -11,6 +11,8 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import static Projet.Biblio.APIXSQL.CreateDB.createNewDatabase;
+
 /**
  * Cette classe représente l'application principale pour la gestion des utilisateurs et la recherche de livres.
  */
@@ -24,6 +26,7 @@ public class MainApp {
      */
     public static void main(String[] args) throws IOException {
 
+        createNewDatabase();
         // Prêt à scanner
         SQLBase example = new SQLBase();
         Scanner scanner = new Scanner(System.in);
@@ -103,14 +106,14 @@ public class MainApp {
                     String titre = "";
                     String auteur = "";
                     String date = "";
-                        System.out.print("Entrez le titre du livre (vide pour ignorer ce filtre) : ");
-                        titre = scanner.nextLine().trim();
+                    System.out.print("Entrez le titre du livre (vide pour ignorer ce filtre) : ");
+                    titre = scanner.nextLine().trim();
 
-                        System.out.print("Entrez l'auteur du livre (vide pour ignorer ce filtre) : ");
-                        auteur = scanner.nextLine().trim();
+                    System.out.print("Entrez l'auteur du livre (vide pour ignorer ce filtre) : ");
+                    auteur = scanner.nextLine().trim();
 
-                        System.out.print("Entrez l'année de publication du livre (vide pour ignorer ce filtre) : ");
-                        date = scanner.nextLine().trim();
+                    System.out.print("Entrez l'année de publication du livre (vide pour ignorer ce filtre) : ");
+                    date = scanner.nextLine().trim();
 
                     // Création d'un client HTTP
                     CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -125,18 +128,18 @@ public class MainApp {
                     queryBuilder.append("SELECT DISTINCT ?titre ?auteur ?date\n");
                     queryBuilder.append("WHERE {\n");
 
-                        if (!titre.isEmpty()) {
-                            queryBuilder.append("  FILTER regex(?titre, \"" + titre + "\", \"i\") \n");
-                        }
-                        if (!auteur.isEmpty()) {
-                            queryBuilder.append("  ?work dcterms:creator ?creator .\n");
-                            queryBuilder.append("  ?creator foaf:name ?auteur .\n");
-                            queryBuilder.append("  FILTER regex(?auteur, \"" + auteur + "\", \"i\") \n");
-                        }
-                        if (!date.isEmpty()) {
-                            queryBuilder.append("  ?work dcterms:date ?date .\n");
-                            queryBuilder.append("  FILTER regex(?date, \"" + date + "\", \"i\") \n");
-                        }
+                    if (!titre.isEmpty()) {
+                        queryBuilder.append("  FILTER regex(?titre, \"" + titre + "\", \"i\") \n");
+                    }
+                    if (!auteur.isEmpty()) {
+                        queryBuilder.append("  ?work dcterms:creator ?creator .\n");
+                        queryBuilder.append("  ?creator foaf:name ?auteur .\n");
+                        queryBuilder.append("  FILTER regex(?auteur, \"" + auteur + "\", \"i\") \n");
+                    }
+                    if (!date.isEmpty()) {
+                        queryBuilder.append("  ?work dcterms:date ?date .\n");
+                        queryBuilder.append("  FILTER regex(?date, \"" + date + "\", \"i\") \n");
+                    }
 
                     queryBuilder.append("  ?work rdfs:label ?titre ;\n");
                     queryBuilder.append("        dcterms:creator ?creator;\n");
@@ -190,4 +193,3 @@ public class MainApp {
         }
     }
 }
-
