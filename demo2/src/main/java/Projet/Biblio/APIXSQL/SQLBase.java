@@ -198,7 +198,7 @@ public class SQLBase {
                 System.out.print("\n liste de livren pas encore rendu et en retard: \n");
                 while(rs.next()){
                     
-                    if(Laterorno(rs.getString("dateReturnLoan"), (LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))) > 0){
+                    if(Laterorno(rs.getString("dateReturnLoan"), (LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))) < 0){
                         System.out.print(rs.getInt("idLoan") + "\t");
                         System.out.print(rs.getString("titre") + "\t");
                         System.out.print(rs.getString("auteur") + "\t");
