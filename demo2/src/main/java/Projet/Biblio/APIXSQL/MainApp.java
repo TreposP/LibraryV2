@@ -52,6 +52,7 @@ public class MainApp {
                         System.out.println("7. Rechercher un prêt par titre et auteur");
                         System.out.println("8. Afficher les prêts d'un utilisateur");
                         System.out.println("9. Quitter");
+                        System.out.println("10. Afficher les retards");
                         System.out.println("Faites votre choix : ");
 
                         int choixGestion = Integer.parseInt(scanner.nextLine().trim());
@@ -82,6 +83,10 @@ public class MainApp {
                                 System.out.println("Entrez l'ID de l'utilisateur : ");
                                 int userId = Integer.parseInt(scanner.nextLine().trim());
                                 example.selectLoansByUserId(userId);
+                                break;
+                            case 10:
+                            System.out.println("liste de retard ");
+                            example.lateLoan();
                                 break;
                             case 9:
                                 GestiontoReturnMenu = false;
