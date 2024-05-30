@@ -85,8 +85,8 @@ public class MainApp {
                                 example.selectLoansByUserId(userId);
                                 break;
                             case 10:
-                            System.out.println("liste de retard ");
-                            example.lateLoan();
+                                System.out.println("liste de retard ");
+                                example.lateLoan();
                                 break;
                             case 9:
                                 GestiontoReturnMenu = false;
