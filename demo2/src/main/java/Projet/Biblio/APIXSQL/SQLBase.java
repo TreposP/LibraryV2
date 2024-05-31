@@ -87,6 +87,55 @@ public class SQLBase {
     /**
      * Insère un nouveau prêt dans la base de données.
      */
+    //verifie si il reste des exempliare a preter
+    public int numberloanbook(int numberloanbook, String autor, String titre){
+        String sql = "SELECT * FROM Loan WHERE titre = ? AND auteur = ?";
+        int bookAlreadyLoaned =0;
+
+        try (Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+                pstmt.setString(1, titre);
+                pstmt.setString(2, autor);
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    //System.out.println(rs.getString("RealDateReturnLoan")+"ligne");
+                    if (null ==rs.getString("RealDateReturnLoan")){
+                        bookAlreadyLoaned ++;
+                    }
+                }
+        } catch(SQLException e) {
+            //System.out.println("erreur vérification"+ e.getMessage());
+        }
+        //System.out.println(bookAlreadyLoaned +"/   /"+numberloanbook);
+        if(bookAlreadyLoaned < numberloanbook){
+            return 1;
+        }
+        return 0;
+    }
+    //compte le nombre de pret max pour utilisateur
+    public int usernumberloan(int maxloan, int id){
+        String sql = "SELECT * FROM Loan WHERE idUser = ?";
+        int numberofloan =0;
+
+        try(Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql)){
+                pstmt.setInt(1, id);
+                ResultSet rs = pstmt.executeQuery();
+                while (rs.next()) {
+                    if (rs.getString("RealDateReturnLoan")== null){
+                    numberofloan ++;
+                    }
+            }
+        } catch(SQLException e) {
+            System.out.println("erreur vérification"+ e.getMessage());
+        }
+        if(numberofloan >= maxloan){
+            return 0;
+        }
+        return 1;
+    }
+
+    
     public void insertLoan() {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Entrez le titre du livre : ");
@@ -103,15 +152,15 @@ public class SQLBase {
             return;
         }
 
-        int currentLoans = countCurrentLoans(idUser);
-        if (currentLoans >= 5) {
-            System.out.println("L'utilisateur a déjà emprunté 4 livres. Impossible d'effectuer un nouveau prêt.");
-            return;
+        if(usernumberloan(5, idUser) == 0){
+            System.out.println("L'utilisateur à déjà trop de livre à rendre");
+            
+            return; //on verifie si il peut encore emprunter
         }
-
-        if (isBookAlreadyLoaned(titre, auteur)) {
-            System.out.println("Ce livre est déjà emprunté. Impossible d'effectuer un nouveau prêt.");
-            return;
+        if(numberloanbook(3, auteur, titre) == 0){
+            System.out.println("tous les exemplaires sont déjà emprunter");
+            
+            return; // on verifie si il y a des livres disponibles
         }
 
         LocalDate dateLoan = LocalDate.now();
