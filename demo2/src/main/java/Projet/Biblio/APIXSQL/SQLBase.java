@@ -19,7 +19,7 @@ public class SQLBase {
      */
     private Connection connect() {
         // Chemin de la base de données SQLite
-        String url = "jdbc:sqlite:/Users/CYTech Student/IdeaProjects/versionP/library/src/main/resources/Database.db";
+        String url = "jdbc:sqlite:/Users/paulinetrepos/Desktop/LibraryV2-main/demo2/src/main/resources/Projet/Biblio/APIXSQL/Database.db";
         Connection conn = null;
         try {
             conn = DriverManager.getConnection(url);
@@ -97,6 +97,12 @@ public class SQLBase {
         int idUser = scanner.nextInt();
         scanner.nextLine(); // Pour consommer le retour à la ligne
 
+        int currentLoans = countCurrentLoans(idUser);
+        if (currentLoans >= 5) {
+            System.out.println("L'utilisateur a déjà emprunté 4 livres. Impossible d'effectuer un nouveau prêt.");
+            return;
+        }
+
         if (isBookAlreadyLoaned(titre, auteur)) {
             System.out.println("Ce livre est déjà emprunté. Impossible d'effectuer un nouveau prêt.");
             return;
@@ -123,6 +129,29 @@ public class SQLBase {
     }
 
     /**
+ * Compte le nombre de livres actuellement empruntés par un utilisateur.
+ *
+ * @param userId ID de l'utilisateur
+ * @return Nombre de livres actuellement empruntés par l'utilisateur
+ */
+private int countCurrentLoans(int userId) {
+    String sql = "SELECT COUNT(*) AS count FROM Loan WHERE idUser = ? AND realDateReturnLoan IS NULL";
+
+    try (Connection conn = this.connect();
+         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        pstmt.setInt(1, userId);
+
+        ResultSet rs = pstmt.executeQuery();
+        if (rs.next()) {
+            return rs.getInt("count");
+        }
+    } catch (SQLException e) {
+        System.out.println("Erreur lors du comptage des livres empruntés : " + e.getMessage());
+    }
+    return 0;
+}
+
+    /**
      * Permet de retourner un livre emprunté.
      */
     public void returnBook() {
@@ -140,8 +169,8 @@ public class SQLBase {
         String sql = "UPDATE Loan SET realDateReturnLoan = ? WHERE idUser = ? AND idLoan = ?";
 
         try (Connection conn = this.connect();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setDate(1, java.sql.Date.valueOf(returnDate));
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, returnDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
             pstmt.setInt(2, userId);
             pstmt.setInt(3, loanId);
 
@@ -178,14 +207,18 @@ public class SQLBase {
              ResultSet rs = pstmt.executeQuery()) {
             System.out.print("\n liste de livre rendu en retard: \n");
             while(rs.next()){
+                LocalDate dateLoan = LocalDate.parse(rs.getString("dateLoan"));
+                LocalDate dateReturnLoan = LocalDate.parse(rs.getString("dateReturnLoan"));
+                LocalDate realDateReturnLoan = LocalDate.parse(rs.getString("RealDateReturnLoan"));
 
-                if(Laterorno(rs.getString("dateReturnLoan"), (rs.getString("RealDateReturnLoan"))) < 0){
+                if (Laterorno(rs.getString("dateReturnLoan"), rs.getString("RealDateReturnLoan")) < 0) {
                     System.out.print(rs.getInt("idLoan") + "\t");
                     System.out.print(rs.getString("titre") + "\t");
                     System.out.print(rs.getString("auteur") + "\t");
                     System.out.print(rs.getInt("idUser") + "\t");
-                    System.out.print(rs.getString("dateLoan") + "\t");
-                    System.out.print(rs.getString("dateReturnLoan") + "\t"+ "\n");
+                    System.out.print(dateLoan.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "\t");
+                    System.out.print(dateReturnLoan.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "\t");
+                    System.out.println(realDateReturnLoan.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + "\n");
                 }
             }
         }  catch(SQLException e){
@@ -211,7 +244,6 @@ public class SQLBase {
         }  catch(SQLException e){
             System.out.println("Erreur lors de la suppression du livre : " + e.getMessage());
         }
-
     }
 
     /**
