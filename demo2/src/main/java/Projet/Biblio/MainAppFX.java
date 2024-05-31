@@ -84,7 +84,6 @@ public class MainAppFX extends Application {
         mainContainer.loadScreen(MainAppFX.screenBookPageID, MainAppFX.screenBookPageFile);
         mainContainer.loadScreen(MainAppFX.screenLoanPageID, MainAppFX.screenLoanPageFile);
 
-
         mainContainer.setScreen(MainAppFX.screenStartPageID);
 
         Group root = new Group();

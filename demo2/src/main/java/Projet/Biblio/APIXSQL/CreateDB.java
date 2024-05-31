@@ -9,7 +9,7 @@ import java.sql.Statement;
 public class CreateDB {
 
     public static void createNewDatabase() {
-        String url = "jdbc:sqlite:/Users/CYTech Student/IdeaProjects/versionP/library/src/main/resources/Database.db";
+        String url = "jdbc:sqlite:/Users/CYTech Student/IdeaProjects/demo2 Library Vjeudisoir/src/main/resources//Projet/Biblio/APIXSQL/Database.db";
 
         try (Connection conn = DriverManager.getConnection(url)) {
             if (conn != null) {
@@ -35,8 +35,7 @@ public class CreateDB {
                         + " dateReturnLoan TEXT,"
                         + " RealDateReturnLoan TEXT,"
                         + " isLate TEXT,"
-                        + " FOREIGN KEY (idUser) REFERENCES User(id),"
-                        + " UNIQUE(title, autor)"
+                        + " FOREIGN KEY (idUser) REFERENCES User(id)"
                         + ");";
 
                 try (Statement stmt = conn.createStatement()) {
@@ -55,8 +54,8 @@ public class CreateDB {
             System.out.println("Erreur lors de la création de la base de données : " + e.getMessage());
         }
     }
-/**
+
     public static void main (String[] args) throws Exception{
         createNewDatabase();
-    }*/
+    }
 }
