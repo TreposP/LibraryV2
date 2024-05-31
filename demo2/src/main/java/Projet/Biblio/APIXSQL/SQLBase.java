@@ -97,6 +97,12 @@ public class SQLBase {
         int idUser = scanner.nextInt();
         scanner.nextLine(); // Pour consommer le retour à la ligne
 
+        // Vérifier si l'utilisateur existe
+        if (!isUserExists(idUser)) {
+            System.out.println("L'utilisateur avec l'ID " + idUser + " n'existe pas dans la base de données.");
+            return;
+        }
+
         int currentLoans = countCurrentLoans(idUser);
         if (currentLoans >= 5) {
             System.out.println("L'utilisateur a déjà emprunté 4 livres. Impossible d'effectuer un nouveau prêt.");
@@ -129,27 +135,52 @@ public class SQLBase {
     }
 
     /**
- * Compte le nombre de livres actuellement empruntés par un utilisateur.
- *
- * @param userId ID de l'utilisateur
- * @return Nombre de livres actuellement empruntés par l'utilisateur
- */
-private int countCurrentLoans(int userId) {
-    String sql = "SELECT COUNT(*) AS count FROM Loan WHERE idUser = ? AND realDateReturnLoan IS NULL";
+     * Vérifie si un utilisateur existe dans la base de données.
+     *
+     * @param userId ID de l'utilisateur à vérifier
+     * @return true si l'utilisateur existe, false sinon
+     */
+    private boolean isUserExists(int userId) {
+        String sql = "SELECT * FROM User WHERE id = ?";
 
-    try (Connection conn = this.connect();
-         PreparedStatement pstmt = conn.prepareStatement(sql)) {
-        pstmt.setInt(1, userId);
+        try (Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
 
-        ResultSet rs = pstmt.executeQuery();
-        if (rs.next()) {
-            return rs.getInt("count");
+            ResultSet rs = pstmt.executeQuery();
+
+            // Si on trouve une ligne, l'utilisateur existe
+            return rs.next();
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la vérification de l'utilisateur : " + e.getMessage());
         }
-    } catch (SQLException e) {
-        System.out.println("Erreur lors du comptage des livres empruntés : " + e.getMessage());
+
+        return false;
     }
-    return 0;
-}
+
+
+    /**
+     * Compte le nombre de livres actuellement empruntés par un utilisateur.
+     *
+     * @param userId ID de l'utilisateur
+     * @return Nombre de livres actuellement empruntés par l'utilisateur
+     */
+    private int countCurrentLoans(int userId) {
+        String sql = "SELECT COUNT(*) AS count FROM Loan WHERE idUser = ? AND realDateReturnLoan IS NULL";
+
+        try (Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setInt(1, userId);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("count");
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors du comptage des livres empruntés : " + e.getMessage());
+        }
+        return 0;
+    }
 
     /**
      * Permet de retourner un livre emprunté.
